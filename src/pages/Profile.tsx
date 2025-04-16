@@ -119,7 +119,7 @@ const Profile = () => {
     );
 
   return (
-    <div className="max-w-sm md:max-w-md lg:max-w-lg mx-auto p-4 text-white">
+    <div className="min-h-screen flex flex-col justify-start max-w-sm md:max-w-md lg:max-w-lg min-w-xs md:min-w-md lg:min-w-lg mx-auto p-4 text-white mt-20">
       {/* User Info Section */}
       <div className="flex flex-col">
         <img
@@ -141,7 +141,7 @@ const Profile = () => {
       </div>
 
       {/* User Repository Section */}
-      <div className="mt-6">
+      <div className="mt-6 flex flex-col w-full">
         <h3 className="text-lg font-semibold">Repositories</h3>
         {repos.length === 0 ? (
           <p className="text-sm mt-2">No public repositories found.</p>
