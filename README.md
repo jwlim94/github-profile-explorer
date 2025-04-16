@@ -24,10 +24,6 @@ It allows users to search for GitHub profiles and view their public repositories
 - React Router for routing between pages
 - GitHub REST API (https://api.github.com/users/:username)
 
-## 🌐 Live Demo
-
-🔗 View the deployed project here: https://your-deployment-url.com
-
 ## 📦 Getting Started
 
 1. Clone the repository:
