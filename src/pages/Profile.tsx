@@ -27,6 +27,9 @@ const Profile = () => {
   const [repos, setRepos] = useState<GitHubRepo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [sortOption, setSortOption] = useState<"name" | "stars" | "updated">(
+    "name"
+  );
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -58,6 +61,17 @@ const Profile = () => {
       fetchUser();
     }
   }, [username]);
+
+  // CALCULATED
+  const sortedRepos = [...repos].sort((a, b) => {
+    if (sortOption === "name") return a.name.localeCompare(b.name);
+    if (sortOption === "stars") return b.stargazers_count - a.stargazers_count;
+    if (sortOption === "updated")
+      return (
+        new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+      );
+    return 0;
+  });
 
   // Loading state
   if (loading)
@@ -122,13 +136,34 @@ const Profile = () => {
 
       {/* User Repository Section */}
       <div className="mt-6">
-        <h3 className="text-lg font-semibold mb-2">Repositories</h3>
+        <h3 className="text-lg font-semibold">Repositories</h3>
 
-        {repos.length === 0 ? (
-          <p className="text-sm">No public repositories found.</p>
+        {sortedRepos.length === 0 ? (
+          <p className="text-sm mt-2">No public repositories found.</p>
         ) : (
-          <ul className="space-y-3">
-            {repos.map((repo) => (
+          <ul className="space-y-3 mt-1">
+            {/* Sorting Section */}
+            <div className="relative flex justify-end">
+              <select
+                value={sortOption}
+                onChange={(e) =>
+                  setSortOption(e.target.value as "name" | "stars" | "updated")
+                }
+                className="appearance-none bg-gray-800 border border-gray-600 rounded pl-2 pr-8 py-1 text-sm"
+              >
+                <option value="name">Name (A–Z)</option>
+                <option value="stars">Most Stars</option>
+                <option value="updated">Last Updated</option>
+              </select>
+
+              {/* Custom dropdown arrow */}
+              <div className="pointer-events-none absolute right-3 top-1/2 transform -translate-y-1/2 text-sm">
+                ▼
+              </div>
+            </div>
+
+            {/* Info Section */}
+            {sortedRepos.map((repo) => (
               <li
                 key={repo.id}
                 className="p-3 border rounded bg-gray-800 bg-opacity-5"
