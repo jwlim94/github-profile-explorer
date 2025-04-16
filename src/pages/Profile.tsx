@@ -123,30 +123,35 @@ const Profile = () => {
       {/* User Repository Section */}
       <div className="mt-6">
         <h3 className="text-lg font-semibold mb-2">Repositories</h3>
-        <ul className="space-y-3">
-          {repos.map((repo) => (
-            <li
-              key={repo.id}
-              className="p-3 border rounded bg-gray-800 bg-opacity-5"
-            >
-              <a
-                href={repo.html_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-semiboldhover:underline"
+
+        {repos.length === 0 ? (
+          <p className="text-sm">No public repositories found.</p>
+        ) : (
+          <ul className="space-y-3">
+            {repos.map((repo) => (
+              <li
+                key={repo.id}
+                className="p-3 border rounded bg-gray-800 bg-opacity-5"
               >
-                {repo.name}
-              </a>
-              <p className="text-sm text-gray-400 mt-2">
-                {repo.description || "No description"}
-              </p>
-              <div className="text-sm text-gray-500 mt-1">
-                ⭐ {repo.stargazers_count} — Updated:{" "}
-                {new Date(repo.updated_at).toLocaleDateString()}
-              </div>
-            </li>
-          ))}
-        </ul>
+                <a
+                  href={repo.html_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semiboldhover:underline"
+                >
+                  {repo.name}
+                </a>
+                <p className="text-sm text-gray-400 mt-2">
+                  {repo.description || "No description"}
+                </p>
+                <div className="text-sm text-gray-500 mt-1">
+                  ⭐ {repo.stargazers_count} — Updated:{" "}
+                  {new Date(repo.updated_at).toLocaleDateString()}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );
