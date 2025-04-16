@@ -30,6 +30,7 @@ const Profile = () => {
   const [sortOption, setSortOption] = useState<"name" | "stars" | "updated">(
     "name"
   );
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -63,15 +64,20 @@ const Profile = () => {
   }, [username]);
 
   // CALCULATED
-  const sortedRepos = [...repos].sort((a, b) => {
-    if (sortOption === "name") return a.name.localeCompare(b.name);
-    if (sortOption === "stars") return b.stargazers_count - a.stargazers_count;
-    if (sortOption === "updated")
-      return (
-        new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-      );
-    return 0;
-  });
+  const filteredRepos = [...repos]
+    .sort((a, b) => {
+      if (sortOption === "name") return a.name.localeCompare(b.name);
+      if (sortOption === "stars")
+        return b.stargazers_count - a.stargazers_count;
+      if (sortOption === "updated")
+        return (
+          new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+        );
+      return 0;
+    })
+    .filter((repo) =>
+      repo.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
   // Loading state
   if (loading)
@@ -137,13 +143,21 @@ const Profile = () => {
       {/* User Repository Section */}
       <div className="mt-6">
         <h3 className="text-lg font-semibold">Repositories</h3>
-
-        {sortedRepos.length === 0 ? (
+        {repos.length === 0 ? (
           <p className="text-sm mt-2">No public repositories found.</p>
         ) : (
-          <ul className="space-y-3 mt-1">
-            {/* Sorting Section */}
-            <div className="relative flex justify-end">
+          <div className="flex flex-col">
+            <div className="relative flex justify-end gap-x-3 mt-4">
+              {/* Filtering Section */}
+              <input
+                type="text"
+                placeholder="Filter by name..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="flex-1 px-3 py-2 rounded bg-gray-800 border border-gray-600 text-sm text-white"
+              />
+
+              {/* Sorting Section */}
               <select
                 value={sortOption}
                 onChange={(e) =>
@@ -163,29 +177,37 @@ const Profile = () => {
             </div>
 
             {/* Info Section */}
-            {sortedRepos.map((repo) => (
-              <li
-                key={repo.id}
-                className="p-3 border rounded bg-gray-800 bg-opacity-5"
-              >
-                <a
-                  href={repo.html_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-semiboldhover:underline"
-                >
-                  {repo.name}
-                </a>
-                <p className="text-sm text-gray-400 mt-2">
-                  {repo.description || "No description"}
-                </p>
-                <div className="text-sm text-gray-500 mt-1">
-                  ⭐ {repo.stargazers_count} — Updated:{" "}
-                  {new Date(repo.updated_at).toLocaleDateString()}
-                </div>
-              </li>
-            ))}
-          </ul>
+            <ul className="space-y-3 mt-3">
+              {filteredRepos.length === 0 ? (
+                <li className="text-sm text-gray-400 text-center py-4">
+                  No matching repositories found.
+                </li>
+              ) : (
+                filteredRepos.map((repo) => (
+                  <li
+                    key={repo.id}
+                    className="p-3 border rounded bg-gray-800 bg-opacity-5"
+                  >
+                    <a
+                      href={repo.html_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold hover:underline"
+                    >
+                      {repo.name}
+                    </a>
+                    <p className="text-sm text-gray-400 mt-2">
+                      {repo.description || "No description"}
+                    </p>
+                    <div className="text-sm text-gray-500 mt-1">
+                      ⭐ {repo.stargazers_count} — Updated:{" "}
+                      {new Date(repo.updated_at).toLocaleDateString()}
+                    </div>
+                  </li>
+                ))
+              )}
+            </ul>
+          </div>
         )}
       </div>
     </div>
